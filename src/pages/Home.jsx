@@ -55,7 +55,23 @@ function calculateLoan(capital, durationMonths, annualRate, annualInsurance) {
   const totalInterest = monthlyLoan * durationMonths - capital;
   const totalInsurance = monthlyInsurance * durationMonths;
 
-  return { monthly, totalCost, totalInterest, totalInsurance, schedule };
+  // Calcul du TAEG par méthode itérative (Newton-Raphson)
+  let taeg = annualRate + annualInsurance; // estimation initiale
+  for (let iter = 0; iter < 20; iter++) {
+    const taegMonthly = taeg / 100 / 12;
+    let pv = 0;
+    let pvDerivative = 0;
+    for (let i = 1; i <= durationMonths; i++) {
+      const discount = Math.pow(1 + taegMonthly, i);
+      pv += monthly / discount;
+      pvDerivative += (-i * monthly) / (discount * (1 + taegMonthly));
+    }
+    const diff = pv - capital;
+    if (Math.abs(diff) < 0.01) break;
+    taeg -= (diff / pvDerivative) * (taegMonthly * 1200);
+  }
+
+  return { monthly, totalCost, totalInterest, totalInsurance, taeg, schedule };
 }
 
 export default function Home() {
@@ -64,7 +80,7 @@ export default function Home() {
   const [rate, setRate] = useState(3.5);
   const [insurance, setInsurance] = useState(0.36);
 
-  const { monthly, totalCost, totalInterest, totalInsurance, schedule } = useMemo(
+  const { monthly, totalCost, totalInterest, totalInsurance, taeg, schedule } = useMemo(
     () => calculateLoan(capital, duration, rate, insurance),
     [capital, duration, rate, insurance]
   );
@@ -129,6 +145,7 @@ export default function Home() {
               totalCost={totalCost}
               totalInterest={totalInterest}
               totalInsurance={totalInsurance}
+              taeg={taeg}
             />
             <AmortizationChart schedule={schedule} />
           </motion.div>
