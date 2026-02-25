@@ -7,6 +7,7 @@ import LoanForm from "@/components/LoanForm";
 import LoanSummary from "@/components/LoanSummary";
 import AmortizationChart from "@/components/AmortizationChart";
 import AmortizationTable from "@/components/AmortizationTable";
+import BorrowingCapacity from "@/components/BorrowingCapacity";
 
 function calculateLoan(capital, durationMonths, annualRate, annualInsurance) {
   const monthlyRate = annualRate / 100 / 12;
@@ -203,6 +204,25 @@ export default function Home() {
           transition={{ delay: 0.3 }}
         >
           <AmortizationTable schedule={schedule} />
+        </motion.div>
+
+        {/* Divider */}
+        <div className="my-16 flex items-center gap-4">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+          <div className="px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700/50 text-slate-400 text-sm">
+            Outil complémentaire
+          </div>
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent"></div>
+        </div>
+
+        {/* Borrowing Capacity */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="rounded-2xl border border-slate-700/50 bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm p-6 md:p-8"
+        >
+          <BorrowingCapacity />
         </motion.div>
 
         {/* Footer */}
