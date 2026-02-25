@@ -15,7 +15,12 @@ Deno.serve(async (req) => {
         const doc = new jsPDF();
         doc.setFont('helvetica');
         
-        const fmt = (n) => Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // Format numbers without special characters
+        const fmt = (n) => {
+            const parts = Number(n).toFixed(2).split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+            return parts.join(',');
+        };
 
         // Fond d'en-tête avec dégradé simulé
         doc.setFillColor(15, 23, 42); // slate-900
