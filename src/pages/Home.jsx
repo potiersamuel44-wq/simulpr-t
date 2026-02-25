@@ -1,5 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 import LoanForm from "@/components/LoanForm";
 import LoanSummary from "@/components/LoanSummary";
 import AmortizationChart from "@/components/AmortizationChart";
@@ -85,6 +88,40 @@ export default function Home() {
     [capital, duration, rate, insurance]
   );
 
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setIsDownloading(true);
+    try {
+      const response = await base44.functions.invoke('generateLoanPDF', {
+        capital,
+        duration,
+        rate,
+        insurance,
+        monthly,
+        totalCost,
+        totalInterest,
+        totalInsurance,
+        taeg,
+        schedule
+      });
+      
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `simulation-pret-${new Date().toISOString().split('T')[0]}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (error) {
+      console.error('Erreur lors du téléchargement:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       {/* Decorative elements */}
@@ -106,9 +143,17 @@ export default function Home() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
             Calculateur de <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-400">Prêt</span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-md mx-auto">
+          <p className="text-slate-400 text-lg max-w-md mx-auto mb-6">
             Estimez vos mensualités et visualisez votre plan de remboursement
           </p>
+          <Button
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold gap-2"
+          >
+            <Download className="w-4 h-4" />
+            {isDownloading ? 'Génération...' : 'Télécharger le PDF'}
+          </Button>
         </motion.div>
 
         {/* Main content */}
