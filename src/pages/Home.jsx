@@ -5,60 +5,68 @@ import LoanSummary from "@/components/LoanSummary";
 import AmortizationChart from "@/components/AmortizationChart";
 import AmortizationTable from "@/components/AmortizationTable";
 
-function calculateLoan(capital, durationMonths, annualRate) {
+function calculateLoan(capital, durationMonths, annualRate, annualInsurance) {
   const monthlyRate = annualRate / 100 / 12;
+  const monthlyInsurance = (capital * annualInsurance / 100) / 12;
 
   if (monthlyRate === 0) {
-    const monthly = capital / durationMonths;
+    const monthlyLoan = capital / durationMonths;
+    const monthly = monthlyLoan + monthlyInsurance;
     const schedule = [];
     let remaining = capital;
     for (let i = 1; i <= durationMonths; i++) {
-      remaining -= monthly;
+      remaining -= monthlyLoan;
       schedule.push({
         month: i,
         monthly,
-        principalPart: monthly,
+        principalPart: monthlyLoan,
         interestPart: 0,
+        insurancePart: monthlyInsurance,
         remaining: Math.max(remaining, 0),
       });
     }
-    return { monthly, totalCost: capital, totalInterest: 0, schedule };
+    return { monthly, totalCost: capital + (monthlyInsurance * durationMonths), totalInterest: 0, totalInsurance: monthlyInsurance * durationMonths, schedule };
   }
 
-  const monthly =
+  const monthlyLoan =
     (capital * monthlyRate * Math.pow(1 + monthlyRate, durationMonths)) /
     (Math.pow(1 + monthlyRate, durationMonths) - 1);
+  
+  const monthly = monthlyLoan + monthlyInsurance;
 
   const schedule = [];
   let remaining = capital;
 
   for (let i = 1; i <= durationMonths; i++) {
     const interestPart = remaining * monthlyRate;
-    const principalPart = monthly - interestPart;
+    const principalPart = monthlyLoan - interestPart;
     remaining -= principalPart;
     schedule.push({
       month: i,
       monthly,
       principalPart,
       interestPart,
+      insurancePart: monthlyInsurance,
       remaining: Math.max(remaining, 0),
     });
   }
 
   const totalCost = monthly * durationMonths;
-  const totalInterest = totalCost - capital;
+  const totalInterest = monthlyLoan * durationMonths - capital;
+  const totalInsurance = monthlyInsurance * durationMonths;
 
-  return { monthly, totalCost, totalInterest, schedule };
+  return { monthly, totalCost, totalInterest, totalInsurance, schedule };
 }
 
 export default function Home() {
   const [capital, setCapital] = useState(200000);
   const [duration, setDuration] = useState(240);
   const [rate, setRate] = useState(3.5);
+  const [insurance, setInsurance] = useState(0.36);
 
-  const { monthly, totalCost, totalInterest, schedule } = useMemo(
-    () => calculateLoan(capital, duration, rate),
-    [capital, duration, rate]
+  const { monthly, totalCost, totalInterest, totalInsurance, schedule } = useMemo(
+    () => calculateLoan(capital, duration, rate, insurance),
+    [capital, duration, rate, insurance]
   );
 
   return (
@@ -104,6 +112,8 @@ export default function Home() {
               setDuration={setDuration}
               rate={rate}
               setRate={setRate}
+              insurance={insurance}
+              setInsurance={setInsurance}
             />
           </motion.div>
 
@@ -118,6 +128,7 @@ export default function Home() {
               monthly={monthly}
               totalCost={totalCost}
               totalInterest={totalInterest}
+              totalInsurance={totalInsurance}
             />
             <AmortizationChart schedule={schedule} />
           </motion.div>

@@ -2,9 +2,9 @@ import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
-import { Banknote, Clock, Percent } from "lucide-react";
+import { Banknote, Clock, Percent, Shield } from "lucide-react";
 
-export default function LoanForm({ capital, setCapital, duration, setDuration, rate, setRate }) {
+export default function LoanForm({ capital, setCapital, duration, setDuration, rate, setRate, insurance, setInsurance }) {
   return (
     <div className="space-y-8">
       <div className="space-y-4">
@@ -86,6 +86,32 @@ export default function LoanForm({ capital, setCapital, duration, setDuration, r
           onChange={(e) => setRate(Number(e.target.value))}
           className="bg-slate-800/50 border-slate-700 text-white text-right"
           min={0.01}
+          step={0.01}
+        />
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium text-slate-400 flex items-center gap-2">
+            <Shield className="w-4 h-4 text-amber-400" />
+            Taux d'assurance annuel
+          </Label>
+          <span className="text-lg font-semibold text-white">{insurance} %</span>
+        </div>
+        <Slider
+          value={[insurance * 100]}
+          onValueChange={([v]) => setInsurance(v / 100)}
+          min={0}
+          max={100}
+          step={1}
+          className="py-2"
+        />
+        <Input
+          type="number"
+          value={insurance}
+          onChange={(e) => setInsurance(Number(e.target.value))}
+          className="bg-slate-800/50 border-slate-700 text-white text-right"
+          min={0}
           step={0.01}
         />
       </div>

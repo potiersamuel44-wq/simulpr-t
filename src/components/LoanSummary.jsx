@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Wallet, CircleDollarSign } from "lucide-react";
+import { TrendingUp, Wallet, CircleDollarSign, Shield } from "lucide-react";
 
 function SummaryCard({ label, value, icon: Icon, color, delay }) {
   return (
@@ -24,11 +24,11 @@ function SummaryCard({ label, value, icon: Icon, color, delay }) {
   );
 }
 
-export default function LoanSummary({ monthly, totalCost, totalInterest }) {
+export default function LoanSummary({ monthly, totalCost, totalInterest, totalInsurance }) {
   const fmt = (n) => Number(n).toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <SummaryCard
         label="Mensualité"
         value={`${fmt(monthly)} €`}
@@ -49,6 +49,13 @@ export default function LoanSummary({ monthly, totalCost, totalInterest }) {
         icon={TrendingUp}
         color="bg-rose-500"
         delay={0.2}
+      />
+      <SummaryCard
+        label="Assurance totale"
+        value={`${fmt(totalInsurance)} €`}
+        icon={Shield}
+        color="bg-blue-500"
+        delay={0.3}
       />
     </div>
   );

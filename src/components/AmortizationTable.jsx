@@ -22,6 +22,7 @@ export default function AmortizationTable({ schedule }) {
               <TableHead className="text-slate-400 text-xs uppercase tracking-wider text-right">Mensualité</TableHead>
               <TableHead className="text-slate-400 text-xs uppercase tracking-wider text-right">Capital</TableHead>
               <TableHead className="text-slate-400 text-xs uppercase tracking-wider text-right">Intérêts</TableHead>
+              <TableHead className="text-slate-400 text-xs uppercase tracking-wider text-right">Assurance</TableHead>
               <TableHead className="text-slate-400 text-xs uppercase tracking-wider text-right">Solde restant</TableHead>
             </TableRow>
           </TableHeader>
@@ -32,6 +33,7 @@ export default function AmortizationTable({ schedule }) {
                 <TableCell className="text-white text-right">{fmt(row.monthly)} €</TableCell>
                 <TableCell className="text-amber-400 text-right">{fmt(row.principalPart)} €</TableCell>
                 <TableCell className="text-rose-400 text-right">{fmt(row.interestPart)} €</TableCell>
+                <TableCell className="text-blue-400 text-right">{fmt(row.insurancePart)} €</TableCell>
                 <TableCell className="text-slate-300 text-right">{fmt(row.remaining)} €</TableCell>
               </TableRow>
             ))}
