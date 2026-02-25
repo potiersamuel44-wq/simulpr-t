@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Banknote, Clock, Percent, Shield } from "lucide-react";
+import RatesFetcher from "@/components/RatesFetcher";
 
 export default function LoanForm({ capital, setCapital, duration, setDuration, rate, setRate, insurance, setInsurance }) {
   return (
@@ -88,6 +89,7 @@ export default function LoanForm({ capital, setCapital, duration, setDuration, r
           min={0.01}
           step={0.01}
         />
+        <RatesFetcher duration={duration} onRateSelect={setRate} />
       </div>
 
       <div className="space-y-4">

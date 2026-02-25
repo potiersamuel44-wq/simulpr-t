@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Calculator, TrendingUp, Wallet, AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import RatesFetcher from "@/components/RatesFetcher";
 
 export default function BorrowingCapacity() {
   const [income, setIncome] = useState(3000);
@@ -183,6 +184,7 @@ export default function BorrowingCapacity() {
               min={0.1}
               step={0.1}
             />
+            <RatesFetcher duration={loanDuration} onRateSelect={setInterestRate} />
           </div>
         </div>
 
