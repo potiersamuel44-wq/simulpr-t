@@ -13,63 +13,67 @@ Deno.serve(async (req) => {
         const { capital, duration, rate, insurance, monthly, totalCost, totalInterest, totalInsurance, taeg, schedule } = await req.json();
 
         const doc = new jsPDF();
+        
+        // Configuration de l'encodage pour supporter les accents
+        doc.setFont('helvetica');
+        
         const fmt = (n) => Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         // En-tête
         doc.setFontSize(22);
-        doc.setFont(undefined, 'bold');
-        doc.text('Simulateur de Prêt', 105, 20, { align: 'center' });
+        doc.setFont('helvetica', 'bold');
+        doc.text('Simulateur de Pret', 105, 20, { align: 'center' });
         
         doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
+        doc.setFont('helvetica', 'normal');
         doc.setTextColor(100);
-        doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, 105, 28, { align: 'center' });
+        doc.text(`Genere le ${new Date().toLocaleDateString('fr-FR')}`, 105, 28, { align: 'center' });
 
         // Paramètres du prêt
         doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.setTextColor(0);
-        doc.text('Paramètres du prêt', 20, 45);
+        doc.text('Parametres du pret', 20, 45);
 
         doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
+        doc.setFont('helvetica', 'normal');
         let y = 55;
-        doc.text(`Capital emprunté : ${fmt(capital)} €`, 25, y);
+        doc.text(`Capital emprunte : ${fmt(capital)} EUR`, 25, y);
         y += 7;
-        doc.text(`Durée : ${duration} mois (${(duration / 12).toFixed(1)} ans)`, 25, y);
+        doc.text(`Duree : ${duration} mois (${(duration / 12).toFixed(1)} ans)`, 25, y);
         y += 7;
-        doc.text(`Taux d'intérêt : ${rate} %`, 25, y);
+        doc.text(`Taux d'interet : ${rate} %`, 25, y);
         y += 7;
         doc.text(`Taux d'assurance : ${insurance} %`, 25, y);
 
         // Récapitulatif
         y += 15;
         doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
-        doc.text('Récapitulatif financier', 20, y);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Recapitulatif financier', 20, y);
 
         y += 10;
         doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.text(`Mensualité : ${fmt(monthly)} €`, 25, y);
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Mensualite : ${fmt(monthly)} EUR`, 25, y);
         y += 7;
         doc.text(`TAEG : ${taeg.toFixed(2)} %`, 25, y);
         y += 7;
-        doc.text(`Coût total du crédit : ${fmt(totalCost)} €`, 25, y);
+        doc.text(`Cout total du credit : ${fmt(totalCost)} EUR`, 25, y);
         y += 7;
-        doc.text(`Intérêts totaux : ${fmt(totalInterest)} €`, 25, y);
+        doc.text(`Interets totaux : ${fmt(totalInterest)} EUR`, 25, y);
         y += 7;
-        doc.text(`Assurance totale : ${fmt(totalInsurance)} €`, 25, y);
+        doc.text(`Assurance totale : ${fmt(totalInsurance)} EUR`, 25, y);
 
         // Tableau d'amortissement
         y += 15;
         doc.setFontSize(14);
-        doc.setFont(undefined, 'bold');
+        doc.setFont('helvetica', 'bold');
         doc.text('Tableau d\'amortissement', 20, y);
 
         y += 8;
         doc.setFontSize(8);
-        doc.setFont(undefined, 'bold');
+        doc.setFont('helvetica', 'bold');
         
         // En-têtes du tableau
         const col1 = 20;
@@ -80,14 +84,14 @@ Deno.serve(async (req) => {
         const col6 = 165;
 
         doc.text('Mois', col1, y);
-        doc.text('Mensualité', col2, y);
+        doc.text('Mensualite', col2, y);
         doc.text('Capital', col3, y);
-        doc.text('Intérêts', col4, y);
+        doc.text('Interets', col4, y);
         doc.text('Assurance', col5, y);
         doc.text('Solde', col6, y);
 
         y += 5;
-        doc.setFont(undefined, 'normal');
+        doc.setFont('helvetica', 'normal');
 
         // Lignes du tableau
         for (let i = 0; i < schedule.length; i++) {
@@ -98,23 +102,23 @@ Deno.serve(async (req) => {
                 y = 20;
                 
                 // Répéter les en-têtes
-                doc.setFont(undefined, 'bold');
+                doc.setFont('helvetica', 'bold');
                 doc.text('Mois', col1, y);
-                doc.text('Mensualité', col2, y);
+                doc.text('Mensualite', col2, y);
                 doc.text('Capital', col3, y);
-                doc.text('Intérêts', col4, y);
+                doc.text('Interets', col4, y);
                 doc.text('Assurance', col5, y);
                 doc.text('Solde', col6, y);
                 y += 5;
-                doc.setFont(undefined, 'normal');
+                doc.setFont('helvetica', 'normal');
             }
 
             doc.text(String(row.month), col1, y);
-            doc.text(`${fmt(row.monthly)} €`, col2, y);
-            doc.text(`${fmt(row.principalPart)} €`, col3, y);
-            doc.text(`${fmt(row.interestPart)} €`, col4, y);
-            doc.text(`${fmt(row.insurancePart)} €`, col5, y);
-            doc.text(`${fmt(row.remaining)} €`, col6, y);
+            doc.text(`${fmt(row.monthly)} EUR`, col2, y);
+            doc.text(`${fmt(row.principalPart)} EUR`, col3, y);
+            doc.text(`${fmt(row.interestPart)} EUR`, col4, y);
+            doc.text(`${fmt(row.insurancePart)} EUR`, col5, y);
+            doc.text(`${fmt(row.remaining)} EUR`, col6, y);
             
             y += 5;
         }
