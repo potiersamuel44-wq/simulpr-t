@@ -29,7 +29,7 @@ function calculateLoan(capital, durationMonths, annualRate, annualInsurance) {
         remaining: Math.max(remaining, 0),
       });
     }
-    return { monthly, totalCost: capital + (monthlyInsurance * durationMonths), totalInterest: 0, totalInsurance: monthlyInsurance * durationMonths, schedule };
+    return { monthly, totalCost: capital + (monthlyInsurance * durationMonths), totalInterest: 0, totalInsurance: monthlyInsurance * durationMonths, taeg: annualInsurance, schedule };
   }
 
   const monthlyLoan =
@@ -84,9 +84,14 @@ export default function Home() {
   const [rate, setRate] = useState(3.5);
   const [insurance, setInsurance] = useState(0.36);
 
+  const safeRate = isNaN(rate) || rate === "" ? 0 : Number(rate);
+  const safeCapital = isNaN(capital) || capital === "" ? 0 : Number(capital);
+  const safeDuration = isNaN(duration) || duration === "" ? 1 : Number(duration);
+  const safeInsurance = isNaN(insurance) || insurance === "" ? 0 : Number(insurance);
+
   const { monthly, totalCost, totalInterest, totalInsurance, taeg, schedule } = useMemo(
-    () => calculateLoan(capital, duration, rate, insurance),
-    [capital, duration, rate, insurance]
+    () => calculateLoan(safeCapital, safeDuration, safeRate, safeInsurance),
+    [safeCapital, safeDuration, safeRate, safeInsurance]
   );
 
   const [isDownloading, setIsDownloading] = useState(false);
@@ -169,13 +174,13 @@ export default function Home() {
             <h2 className="text-white font-semibold text-lg mb-6">Paramètres du prêt</h2>
             <LoanForm
               capital={capital}
-              setCapital={setCapital}
+              setCapital={(v) => setCapital(v === "" ? "" : Number(v))}
               duration={duration}
-              setDuration={setDuration}
+              setDuration={(v) => setDuration(v === "" ? "" : Number(v))}
               rate={rate}
-              setRate={setRate}
+              setRate={(v) => setRate(v === "" ? "" : Number(v))}
               insurance={insurance}
-              setInsurance={setInsurance}
+              setInsurance={(v) => setInsurance(v === "" ? "" : Number(v))}
             />
           </motion.div>
 
